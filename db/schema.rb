@@ -10,10 +10,60 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_04_13_003956) do
+ActiveRecord::Schema.define(version: 2022_04_13_041734) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "activities", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "activities_escorts", id: false, force: :cascade do |t|
+    t.bigint "escort_id", null: false
+    t.bigint "activity_id", null: false
+  end
+
+  create_table "categories", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "categories_escorts", id: false, force: :cascade do |t|
+    t.bigint "escort_id", null: false
+    t.bigint "category_id", null: false
+  end
+
+  create_table "escorts", force: :cascade do |t|
+    t.string "username"
+    t.string "first_name"
+    t.string "last_name"
+    t.integer "city"
+    t.text "description"
+    t.integer "price"
+    t.integer "stars"
+    t.integer "sex"
+    t.integer "age"
+    t.string "phone"
+    t.bigint "user_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id"], name: "index_escorts_on_user_id"
+  end
+
+  create_table "escorts_locations", id: false, force: :cascade do |t|
+    t.bigint "escort_id", null: false
+    t.bigint "location_id", null: false
+  end
+
+  create_table "locations", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
 
   create_table "roles", force: :cascade do |t|
     t.string "name"
@@ -41,4 +91,5 @@ ActiveRecord::Schema.define(version: 2022_04_13_003956) do
     t.index ["user_id"], name: "index_users_roles_on_user_id"
   end
 
+  add_foreign_key "escorts", "users"
 end

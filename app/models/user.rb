@@ -4,6 +4,8 @@ class User < ApplicationRecord
   # que será usado por Knock
   has_secure_password
 
+  has_one :escort
+
   before_save   :downcase_email, :downcase_username
 
   VALID_EMAIL_REGEX = /\A([\w+\-].?)+@[a-z]+[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i
