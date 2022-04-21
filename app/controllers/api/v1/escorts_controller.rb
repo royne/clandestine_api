@@ -33,17 +33,11 @@ module Api
         @escort.activity_ids = params[:activity_ids] if params[:activity_ids].present?
         @escort.location_ids = params[:location_ids] if params[:location_ids].present?
         
-        if params[:photos_0].present?
-          array_photos = []
-          params.each { |x| array_photos.push(x[1])}
-          @escort.photos = array_photos
-          if @escort.save
-            render json: @escort, status: :ok
-          else
-            render json: @escort.errors, status: :unprocessable_entity
-          end
-          return
+        if params[:escort][:photos].present?
+          files = params[:escort][:photos]
+          files.keys.each {|x| @escort.photos.attach(files[x])}
         end
+        
         
         if @escort.update(escort_params)
           render json: @escort, status: :ok
@@ -77,8 +71,8 @@ module Api
 
         # Only allow a list of trusted parameters through.
         def escort_params
-          params.require(:escort).permit(:username, :first_name, :last_name, :city, :description, :price, :stars, :sex, :age, :phone, :user_id,
-            :activity_ids => [], :location_ids => [], :category_ids => [])
+          params.require(:escort).permit(:username, :first_name, :last_name, :city, :description, :price, :stars, :sex, :age, :phone, :user_id, :avatar,
+            :photos => [], :activity_ids => [], :location_ids => [], :category_ids => [])
         end
     end
 

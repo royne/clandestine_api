@@ -70,6 +70,7 @@ module Api
               categories: !escort.categories.blank? ? escort.categories.map { |x| {value: x.id, label: x.name} }  : [] ,
               activities: !escort.activities.blank? ? escort.activities.map { |x| {value: x.id, label: x.name} } : [],
               locations: !escort.locations.blank? ? escort.locations.map { |x| {value: x.id, label: x.name} } : [],
+              photos: escort.photos.attached? ? escort.photos.map { |x|  {id:x.id, url: rails_blob_url(x)} } : []
             }
             render json: data
           end
