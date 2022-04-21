@@ -21,9 +21,29 @@ module Api
         @user = User.new(user_params)
     
         if @user.save
-          render json: @user, status: :created, location: @user
+          render json: @user, status: :created
         else
           render json: @user.errors, status: :unprocessable_entity
+        end
+      end
+
+      def create_escort
+        ActiveRecord::Base.transaction do 
+          phone = params[:user][:phone]
+          if Escort.find_by(phone: phone)
+            render json: { error: 'Celular ya se encuentra registrado'},  status: :unprocessable_entity
+            return
+          end  
+          user = User.new(user_params)
+          user.add_role(:escort)
+          if user.save
+            escort = Escort.new(username: user.username, phone: phone)
+            escort.user = user
+            escort.save
+            render json: user, status: :ok
+          else
+            render json: user.errors, status: :unprocessable_entity
+          end
         end
       end
     
@@ -42,7 +62,20 @@ module Api
       end
 
       def current
-        render json: current_user
+        if current_user
+          if current_user.has_role?(:escort)
+            escort =  current_user.escort
+            data = {
+              escort: escort,
+              categories: !escort.categories.blank? ? escort.categories.map { |x| {value: x.id, label: x.name} }  : [] ,
+              activities: !escort.activities.blank? ? escort.activities.map { |x| {value: x.id, label: x.name} } : [],
+              locations: !escort.locations.blank? ? escort.locations.map { |x| {value: x.id, label: x.name} } : [],
+            }
+            render json: data
+          end
+        else
+          render json: {error: "not user"}
+        end
       end
           
       private

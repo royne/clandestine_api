@@ -29,8 +29,24 @@ module Api
 
       # PATCH/PUT /escorts/1
       def update
+        @escort.category_ids = params[:category_ids] if params[:category_ids].present?
+        @escort.activity_ids = params[:activity_ids] if params[:activity_ids].present?
+        @escort.location_ids = params[:location_ids] if params[:location_ids].present?
+        
+        if params[:photos_0].present?
+          array_photos = []
+          params.each { |x| array_photos.push(x[1])}
+          @escort.photos = array_photos
+          if @escort.save
+            render json: @escort, status: :ok
+          else
+            render json: @escort.errors, status: :unprocessable_entity
+          end
+          return
+        end
+        
         if @escort.update(escort_params)
-          render json: @escort
+          render json: @escort, status: :ok
         else
           render json: @escort.errors, status: :unprocessable_entity
         end
@@ -39,6 +55,18 @@ module Api
       # DELETE /escorts/1
       def destroy
         @escort.destroy
+      end
+
+      def escorts_selected
+        activities = Activity.all
+        locations = Location.all
+        categories = Category.all
+        options = {activities: [], locations: [], categories: []}
+        activities.map { |x| options[:activities].push({label: x.name, value: x.id})}
+        locations.map { |x| options[:locations].push({label: x.name, value: x.id})}
+        categories.map { |x| options[:categories].push({label: x.name, value: x.id})}
+
+        render json: options 
       end
 
       private
