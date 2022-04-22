@@ -32,6 +32,8 @@ module Api
         @escort.category_ids = params[:category_ids] if params[:category_ids].present?
         @escort.activity_ids = params[:activity_ids] if params[:activity_ids].present?
         @escort.location_ids = params[:location_ids] if params[:location_ids].present?
+
+        @escort.avatar = params[:escort][:avatar] if params[:escort][:avatar].present?
         
         if params[:escort][:photos].present?
           files = params[:escort][:photos]
