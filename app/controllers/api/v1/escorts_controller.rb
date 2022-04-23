@@ -65,6 +65,18 @@ module Api
         render json: options 
       end
 
+      def randon_premium
+        escorts = Escort.all.includes(:photos_attachments, :avatar_attachment)
+        number_photos = 3
+        number_elm = escorts.size * number_photos
+        arr = []
+        escorts.each do |escort| 
+          escort.photos.each { |x| arr.push({id: escort.id, username: escort.username, photo: rails_blob_url(x), avatar: rails_blob_url(escort.avatar) })}
+        end
+        data = arr.shuffle
+        render json: data.shuffle
+      end
+
       private
         # Use callbacks to share common setup or constraints between actions.
         def set_escort

@@ -14,6 +14,7 @@ Rails.application.routes.draw do
       resources :escorts, only: [:index, :show, :update, :create, :destroy] do 
         collection do
           get :escorts_selected
+          get :randon_premium
         end
       end
     end
