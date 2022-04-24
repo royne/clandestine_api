@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  default_url_options :host => "http://localhost:4000"
+  Rails.application.routes.default_url_options = {host: ENV["BACK_HOST"] }
   
   namespace :api do
     namespace :v1 do
