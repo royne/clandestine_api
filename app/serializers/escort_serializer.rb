@@ -5,10 +5,14 @@ class EscortSerializer < ActiveModel::Serializer
   has_one :user
 
   def avatar
-     object.avatar.attached? ? url_for(object.avatar) : ""
+     object.avatar.attached? ? transform_image(object.avatar, 500) : ""
   end
 
   def photos
-    object.photos.attached? ? object.photos.map { |x| url_for(x) } : [] 
+    object.photos.attached? ? object.photos.map { |x| transform_image(x, 500) } : [] 
   end
+
+   def transform_image(image, dimension)
+    rails_representation_url(image.variant(resize_to_limit: [dimension, nil]))
+   end
 end

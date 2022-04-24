@@ -71,7 +71,7 @@ module Api
         number_elm = escorts.size * number_photos
         arr = []
         escorts.each do |escort| 
-          escort.photos.each { |x| arr.push({id: escort.id, username: escort.username, photo: rails_blob_url(x), avatar: rails_blob_url(escort.avatar) })}
+          escort.photos.each { |x| arr.push({id: escort.id, username: escort.username, photo: transform_image(x, 500), avatar: transform_image(escort.avatar, 60) })}
         end
         data = arr.shuffle
         render json: data.shuffle
@@ -88,6 +88,7 @@ module Api
           params.require(:escort).permit(:username, :first_name, :last_name, :city, :description, :price, :stars, :sex, :age, :phone, :user_id, :avatar,
             :photos => [], :activity_ids => [], :location_ids => [], :category_ids => [])
         end
+
     end
 
   end
