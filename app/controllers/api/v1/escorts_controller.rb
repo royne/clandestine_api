@@ -71,7 +71,7 @@ module Api
         number_elm = escorts.size * number_photos
         arr = []
         escorts.each do |escort| 
-          escort.photos.each { |x| arr.push({id: escort.id, username: escort.username, photo: transform_image(x, 500), avatar: transform_image(escort.avatar, 60) })}
+          escort.photos.each { |x| arr.push({id: escort.id, username: escort.username, photo: transform_image(x, 600), avatar: transform_image(escort.avatar, 60) })}
         end
         data = arr.shuffle
         render json: data.shuffle

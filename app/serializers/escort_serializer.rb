@@ -5,11 +5,11 @@ class EscortSerializer < ActiveModel::Serializer
   has_one :user
 
   def avatar
-     object.avatar.attached? ? transform_image(object.avatar, 500) : ""
+     object.avatar.attached? ? transform_image(object.avatar, 600) : ""
   end
 
   def photos
-    object.photos.attached? ? object.photos.map { |x| transform_image(x, 500) } : [] 
+    object.photos.attached? ? object.photos.map { |x| transform_image(x, 600) } : [] 
   end
 
    def transform_image(image, dimension)
