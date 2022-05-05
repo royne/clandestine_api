@@ -13,6 +13,6 @@ class EscortSerializer < ActiveModel::Serializer
   end
 
    def transform_image(image, dimension)
-    rails_representation_url(image.variant(resize_to_limit: [dimension, nil]))
+    url_for(image.variant(resize_to_limit: [dimension, nil]))
    end
 end

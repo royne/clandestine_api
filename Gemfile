@@ -27,6 +27,8 @@ gem 'rack-cors'
 gem 'knock', git: 'https://github.com/nsarno/knock', branch: 'master', ref: '9214cd027422df8dc31eb67c60032fbbf8fc100b'
 gem "rolify"
 gem 'active_model_serializers', '~> 0.10.10'
+gem 'figaro', '~> 1.1', '>= 1.1.1'
+gem "aws-sdk-s3", require: false
 
 
 group :development, :test do
