@@ -17,6 +17,9 @@ Rails.application.routes.draw do
           get :randon_premium
         end
       end
+
+      resources :search, only: [:index]
+      
     end
   end
 end
