@@ -2,7 +2,7 @@ module Api
   module V1 
 
     class EscortsController < ApplicationController
-      before_action :set_escort, only: [:show, :update, :destroy]
+      before_action :set_escort, only: [:show, :update, :destroy, :counter]
 
       # GET /escorts
       def index
@@ -71,12 +71,16 @@ module Api
         number_elm = escorts.size * number_photos
         arr = []
         escorts.each do |escort| 
-          escort.photos.each { |x| arr.push({id: escort.id, username: escort.username, photo: transform_image(x, 600), avatar: transform_image(escort.avatar, 60) })}
+          escort.photos.each { |x| arr.push({id: escort.id, username: escort.username, photo: transform_image(x, 600), avatar: transform_image(escort.avatar, 60), visit_counter: escort.visit_counter })}
         end
         data = arr.shuffle
         render json: data.shuffle
       end
 
+      def counter
+        @escort.update(visit_counter: @escort.visit_counter + 1)
+      end
+      
       private
         # Use callbacks to share common setup or constraints between actions.
         def set_escort
@@ -85,7 +89,7 @@ module Api
 
         # Only allow a list of trusted parameters through.
         def escort_params
-          params.require(:escort).permit(:username, :first_name, :last_name, :city, :description, :price, :stars, :sex, :age, :phone, :user_id, :avatar,
+          params.require(:escort).permit(:username, :first_name, :last_name, :city, :description, :price, :stars, :sex, :age, :phone, :user_id, :avatar, :visit_counter,
             :photos => [], :activity_ids => [], :location_ids => [], :category_ids => [])
         end
 

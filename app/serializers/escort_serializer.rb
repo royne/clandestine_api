@@ -1,7 +1,7 @@
 class EscortSerializer < ActiveModel::Serializer
   include Rails.application.routes.url_helpers
 
-  attributes :id, :username, :first_name, :last_name, :city, :description, :price, :stars, :sex, :age, :phone, :avatar, :photos
+  attributes :id, :username, :first_name, :last_name, :city, :description, :price, :stars, :sex, :age, :phone, :avatar, :photos, :visit_counter
   has_one :user
 
   def avatar
