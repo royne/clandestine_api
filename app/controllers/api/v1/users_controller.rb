@@ -18,12 +18,12 @@ module Api
     
       # POST /users
       def create
-        @user = User.new(user_params)
-    
-        if @user.save
-          render json: @user, status: :created
+        user = User.new(user_params)
+        user.add_role(:user)
+        if user.save
+          render json: user, status: :created
         else
-          render json: @user.errors, status: :unprocessable_entity
+          render json: user.errors, status: :unprocessable_entity
         end
       end
 
@@ -74,6 +74,8 @@ module Api
               avatar: escort.avatar.attached? ? transform_image(escort.avatar, 100) : ""
             }
             render json: data
+          elsif current_user.has_role?(:user)
+            render json: current_user
           end
         else
           render json: {error: "not user"}
