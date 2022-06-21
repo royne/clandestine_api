@@ -3,6 +3,9 @@ class EscortSerializer < ActiveModel::Serializer
 
   attributes :id, :username, :first_name, :last_name, :city, :description, :price, :stars, :sex, :age, :phone, :avatar, :photos, :visit_counter
   has_one :user
+  has_many :categories
+  has_many :locations
+  has_many :activities
 
   def avatar
      object.avatar.attached? ? transform_image(object.avatar, 600) : ""
