@@ -6,7 +6,7 @@ module Api
 
       # GET /escorts
       def index
-        @escorts = Escort.all
+        @escorts = Escort.includes(:categories, :locations, :activities, [avatar_attachment: :blob], [photos_attachments: :blob], [user: :roles]).with_attached_avatar.with_attached_photos.all
 
         render json: @escorts
       end
@@ -66,7 +66,7 @@ module Api
       end
 
       def randon_premium
-        escorts = Escort.all.includes(:photos_attachments, :avatar_attachment)
+        escorts = Escort.includes(:photos_attachments, :avatar_attachment, [avatar_attachment: :blob], [photos_attachments: :blob], [user: :roles]).with_attached_avatar.with_attached_photos.all
         number_photos = 3
         number_elm = escorts.size * number_photos
         arr = []
@@ -84,7 +84,7 @@ module Api
       private
         # Use callbacks to share common setup or constraints between actions.
         def set_escort
-          @escort = Escort.includes(:categories, :activities, :locations).find(params[:id])
+          @escort = Escort.includes(:categories, :activities, :locations, [avatar_attachment: :blob], [photos_attachments: :blob], [user: :roles]).with_attached_avatar.with_attached_photos.find(params[:id])
         end
 
         # Only allow a list of trusted parameters through.
