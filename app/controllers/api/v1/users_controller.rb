@@ -2,6 +2,7 @@ module Api
   module V1 
     
     class UsersController < ApplicationController
+      include EscortsHelper
       before_action :set_user, only: [:show, :update, :destroy]
     
       # GET /users
@@ -63,18 +64,9 @@ module Api
 
       def current
         if current_user
-          if current_user.has_role?(:escort)
-            escort =  current_user.escort
-            data = {
-              escort: escort,
-              categories: !escort.categories.blank? ? escort.categories.map { |x| {value: x.id, label: x.name} }  : [] ,
-              activities: !escort.activities.blank? ? escort.activities.map { |x| {value: x.id, label: x.name} } : [],
-              locations: !escort.locations.blank? ? escort.locations.map { |x| {value: x.id, label: x.name} } : [],
-              photos: escort.photos.attached? ? escort.photos.map { |x|  {id:x.id, url: transform_image(x, 300)} } : [],
-              avatar: escort.avatar.attached? ? transform_image(escort.avatar, 100) : "",
-              role: "escort"
-            }
-            render json: data
+          if current_user.has_role?(:escort)  
+            escort = set_escort(current_user.escort.id)
+            render json: current_escort(escort)
           elsif current_user.has_role?(:user)
             render json: current_user
           end
@@ -87,6 +79,10 @@ module Api
         # Use callbacks to share common setup or constraints between actions.
         def set_user
           @user = User.find(params[:id])
+        end
+
+        def set_escort escort_id
+          Escort.includes(:categories, :activities, :locations, [avatar_attachment: :blob], [photos_attachments: :blob]).with_attached_avatar.with_attached_photos.find(escort_id)
         end
     
         # Only allow a list of trusted parameters through.

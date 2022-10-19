@@ -2,6 +2,7 @@ module Api
   module V1 
 
     class EscortsController < ApplicationController
+      include EscortsHelper
       before_action :set_escort, only: [:show, :update, :destroy, :counter]
 
       # GET /escorts
@@ -54,31 +55,16 @@ module Api
       end
 
       def escorts_selected
-        activities = Activity.all
-        locations = Location.all
-        categories = Category.all
-        options = {activities: [], locations: [], categories: []}
-        activities.map { |x| options[:activities].push({label: x.name, value: x.id})}
-        locations.map { |x| options[:locations].push({label: x.name, value: x.id})}
-        categories.map { |x| options[:categories].push({label: x.name, value: x.id})}
-
-        render json: options 
+        render json: options_for_select 
       end
 
       def randon_premium
         escorts = Escort.includes(:photos_attachments, :avatar_attachment, [avatar_attachment: :blob], [photos_attachments: :blob], [user: :roles]).with_attached_avatar.with_attached_photos.all
-        number_photos = 3
-        number_elm = escorts.size * number_photos
-        arr = []
-        escorts.each do |escort| 
-          escort.photos.each { |x| arr.push({id: escort.id, username: escort.username, photo: transform_image(x, 600), avatar: transform_image(escort.avatar, 60), visit_counter: escort.visit_counter })}
-        end
-        data = arr.shuffle
-        render json: data.shuffle
+        render json: escorts_randon(escorts)
       end
 
       def counter
-        @escort.update(visit_counter: @escort.visit_counter + 1)
+        @escort.increase_visit_counter!
       end
       
       private

@@ -13,4 +13,8 @@ class Escort < ApplicationRecord
   enum sex: [:mujer, :hombre, :indefinido]  
   enum city: [:bogota]  
 
+  def increase_visit_counter!
+    self.update(visit_counter: visit_counter + 1)
+  end
+
 end
