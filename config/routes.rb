@@ -15,8 +15,12 @@ Rails.application.routes.draw do
         collection do
           get :escorts_selected
           get :randon_premium
+          get :counter
         end
       end
+
+      resources :search, only: [:index]
+      
     end
   end
 end

@@ -2,11 +2,12 @@ module Api
   module V1 
 
     class EscortsController < ApplicationController
-      before_action :set_escort, only: [:show, :update, :destroy]
+      include EscortsHelper
+      before_action :set_escort, only: [:show, :update, :destroy, :counter]
 
       # GET /escorts
       def index
-        @escorts = Escort.all
+        @escorts = Escort.includes(:categories, :locations, :activities, [avatar_attachment: :blob], [photos_attachments: :blob], [user: :roles]).with_attached_avatar.with_attached_photos.all
 
         render json: @escorts
       end
@@ -54,38 +55,27 @@ module Api
       end
 
       def escorts_selected
-        activities = Activity.all
-        locations = Location.all
-        categories = Category.all
-        options = {activities: [], locations: [], categories: []}
-        activities.map { |x| options[:activities].push({label: x.name, value: x.id})}
-        locations.map { |x| options[:locations].push({label: x.name, value: x.id})}
-        categories.map { |x| options[:categories].push({label: x.name, value: x.id})}
-
-        render json: options 
+        render json: options_for_select 
       end
 
       def randon_premium
-        escorts = Escort.all.includes(:photos_attachments, :avatar_attachment)
-        number_photos = 3
-        number_elm = escorts.size * number_photos
-        arr = []
-        escorts.each do |escort| 
-          escort.photos.each { |x| arr.push({id: escort.id, username: escort.username, photo: transform_image(x, 500), avatar: transform_image(escort.avatar, 60) })}
-        end
-        data = arr.shuffle
-        render json: data.shuffle
+        escorts = Escort.includes(:photos_attachments, :avatar_attachment, [avatar_attachment: :blob], [photos_attachments: :blob], [user: :roles]).with_attached_avatar.with_attached_photos.all
+        render json: escorts_randon(escorts)
       end
 
+      def counter
+        @escort.increase_visit_counter!
+      end
+      
       private
         # Use callbacks to share common setup or constraints between actions.
         def set_escort
-          @escort = Escort.find(params[:id])
+          @escort = Escort.includes(:categories, :activities, :locations, [avatar_attachment: :blob], [photos_attachments: :blob], [user: :roles]).with_attached_avatar.with_attached_photos.find(params[:id])
         end
 
         # Only allow a list of trusted parameters through.
         def escort_params
-          params.require(:escort).permit(:username, :first_name, :last_name, :city, :description, :price, :stars, :sex, :age, :phone, :user_id, :avatar,
+          params.require(:escort).permit(:username, :first_name, :last_name, :city, :description, :price, :stars, :sex, :age, :phone, :user_id, :avatar, :visit_counter,
             :photos => [], :activity_ids => [], :location_ids => [], :category_ids => [])
         end
 
