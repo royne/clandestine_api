@@ -7,7 +7,7 @@ module Api
 
       # GET /escorts
       def index
-        @escorts = Escort.includes(:categories, :locations, :activities, [avatar_attachment: :blob], [photos_attachments: :blob], [user: :roles]).with_attached_avatar.with_attached_photos.all
+        @escorts = Escort.includes(:categories, :locations, :activities, [avatar_attachment: :blob], [photos_attachments: :blob], [user: :roles]).with_attached_avatar.with_attached_photos.actives
 
         render json: @escorts
       end
@@ -59,7 +59,7 @@ module Api
       end
 
       def randon_premium
-        escorts = Escort.includes(:photos_attachments, :avatar_attachment, [avatar_attachment: :blob], [photos_attachments: :blob], [user: :roles]).with_attached_avatar.with_attached_photos.all
+        escorts = Escort.includes(:photos_attachments, :avatar_attachment, [avatar_attachment: :blob], [photos_attachments: :blob], [user: :roles]).with_attached_avatar.with_attached_photos.actives
         render json: escorts_randon(escorts)
       end
 

@@ -11,7 +11,9 @@ class Escort < ApplicationRecord
 
   enum subscription_type: [:basic, :silver, :gold, :premium]  
   enum sex: [:mujer, :hombre, :indefinido]  
-  enum city: [:bogota]  
+  enum city: [:bogota]
+  
+  scope :actives, -> { where(active: true) }
 
   def increase_visit_counter!
     self.update(visit_counter: visit_counter + 1)

@@ -29,22 +29,18 @@ module Api
       end
 
       def create_escort
-        ActiveRecord::Base.transaction do 
-          phone = params[:user][:phone]
-          if Escort.find_by(phone: phone)
-            render json: { error: 'Celular ya se encuentra registrado'},  status: :unprocessable_entity
-            return
-          end  
-          user = User.new(user_params)
-          user.add_role(:escort)
-          if user.save
-            escort = Escort.new(username: user.username, phone: phone)
-            escort.user = user
-            escort.save
-            render json: user, status: :ok
-          else
-            render json: user.errors, status: :unprocessable_entity
-          end
+        phone = params[:escort_attributes][:phone]
+        if Escort.find_by(phone: phone) || phone.nil?
+          render json: { error: 'Celular ya se encuentra registrado'},  status: :unprocessable_entity
+          return
+        end  
+        user = User.new(user_params)
+        user.add_role(:escort)
+        if user.save
+          user.create_escort!(phone)
+          render json: user, status: :ok
+        else
+          render json: user.errors, status: :unprocessable_entity
         end
       end
     
